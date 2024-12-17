@@ -1,0 +1,44 @@
+model PushGateway {
+    id          String       @id @default(cuid())
+    createAt    DateTime     @default(now())
+    updateAt    DateTime     @updatedAt
+    deleteAt    DateTime?
+    name        String
+    icon        String
+    description String?
+    pushMethod  PushMethod[]
+}
+
+model PushMethod {
+    id             String      @id @default(cuid())
+    name           String
+    gatewayId      String
+    userId         String
+    subscriptionId String
+    createAt       DateTime    @default(now())
+    updateAt       DateTime    @updatedAt
+    deleteAt       DateTime?
+    enabled        Boolean
+    apiBase        String?
+    token          String?
+    otherFields    Json?
+    user           User        @relation(fields: [userId], references: [id])
+    pushGateway    PushGateway @relation(fields: [gatewayId], references: [id])
+    PushItem       PushItem[]
+}
+
+model PushItem {
+    id             String  @id @default(cuid())
+    pushId         String
+    userId         String
+    subscriptionId String?
+
+    createAt     DateTime      @default(now())
+    updateAt     DateTime      @updatedAt
+    deleteAt     DateTime?
+    name         String
+    description  String?
+    pushMethod   PushMethod    @relation(fields: [pushId], references: [id])
+    Subscription Subscription? @relation(fields: [subscriptionId], references: [id])
+    User         User?         @relation(fields: [userId], references: [id])
+}

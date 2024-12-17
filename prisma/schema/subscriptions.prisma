@@ -1,0 +1,37 @@
+model Subscription {
+    id                      String     @id @default(cuid())
+    userId                  String
+    providerId              String
+    name                    String
+    icon                    String?
+    createAt                DateTime   @default(now())
+    updateAt                DateTime   @updatedAt
+    deleteAt                DateTime?
+    // Subscription Info
+    startedAt               DateTime? // If empty, set to createAt
+    renewAt                 DateTime?
+    willExpireAt            DateTime?
+    endAt                   DateTime?
+    // Reminder fields
+    reminder                PushItem[]
+    // Accounting fields
+    amount                  Float?
+    currency                String?
+    period                  Int
+    periodUnit              String
+    updateExpireTimeOnRenew Boolean
+    // Relations
+    provider                Provider   @relation(fields: [providerId], references: [id], onDelete: Cascade)
+    user                    User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Provider {
+    id           String         @id @default(cuid())
+    name         String
+    icon         String?
+    description  String?
+    createAt     DateTime       @default(now())
+    updateAt     DateTime       @updatedAt
+    deleteAt     DateTime?
+    Subscription Subscription[]
+}
